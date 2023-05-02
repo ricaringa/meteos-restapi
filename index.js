@@ -12,16 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const axios_1 = __importDefault(require("axios"));
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
-app.get('/', (req, res) => {
-    res.send('api working');
+app.get("/", (req, res) => {
+    res.send("api working");
 });
-app.get('/getWeatherData/:lat/:long', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/getWeatherData/:lat/:long", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const params = req.params;
-    const request = yield fetch(`https://api.open-meteo.com/v1/forecast?latitude=${params.lat}&longitude=${params.long}&current_weather=true`);
-    const response = yield request.json();
-    res.send(response);
+    try {
+        const response = yield axios_1.default.get(`https://api.open-meteo.com/v1/forecast?latitude=${params.lat}&longitude=${params.long}&current_weather=true`);
+        res.send(response.data);
+    }
+    catch (error) {
+        res.send(error);
+    }
 }));
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`App listening on PORT ${port}`));
